@@ -4,7 +4,7 @@ import psycopg2
 
 #establishing the connection
 conn = psycopg2.connect(
-   database="cse412", user='hbhogara', password='db123', host='127.0.0.1', port= '5432'
+   database="cse412", user='ENTER YOUR POSTGRES USERNAME', password='ENTER YOUR POSTGRES PASSWORD(if applicable)', host='127.0.0.1', port= '5432'
 )
 #Creating a cursor object using the cursor() method
 cursor = conn.cursor()

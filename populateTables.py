@@ -1,6 +1,14 @@
 import csv
 import random
+import psycopg2
 
+#establishing the connection
+#Change X and Y to appropriate username and password
+conn = psycopg2.connect(
+   database="cse412", user='hbhogara', password='db123', host='127.0.0.1', port= '5432'
+)
+#Creating a cursor object using the cursor() method
+cursor = conn.cursor()
 #Formatting data
 descriptions  = ["Alpine plant", "Desert terrain plant","Tropical plant", "Coastal terrain plant",
                 "Coniferous Tree", "Deciduous Tree", "Shrub", "Floral plant", "Fruit plant", "Indoor plant"]
@@ -28,3 +36,7 @@ with open('PLANTS_database.csv') as csv_file:
             data.append(data_row)
 
     print(f'Processed {line_count} lines.')
+i = 0
+for row in data:
+    insertProduct = "INSERT INTO Product(product_code,product_name,benefits,description,price) VALUES ("str(row[0]) + ","+ str(row[1]) + ","+ str(row[2]) + ","+ str(row[3]) + ","+ str(row[4]) + ")"
+    cursor.execute(insertProduct)

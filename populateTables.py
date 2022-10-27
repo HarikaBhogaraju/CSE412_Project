@@ -11,8 +11,8 @@ conn = psycopg2.connect(
 cursor = conn.cursor()
 #Formatting data
 descriptions  = ["Alpine plant", "Desert terrain plant","Tropical plant", "Coastal terrain plant",
-                "Coniferous Tree", "Deciduous Tree", "Shrub", "Floral plant", "Fruit plant", "Indoor plant"]
-benefits = ["Therapeutic", "Decorative", "Fruity","Healing abilities"]
+                "Coniferous Tree", "Deciduous Tree", "Shrub", "Floral plant", "Fruit plant", "Indoor plant", "Outdoor plants", "Herb plants"] 
+benefits = ["Therapeutic", "Decorative", "Fruity","Healing abilities", "Fit small places", "Reduce Allergens", "Improve Physical Health"]
 price = 0
 data = []
 with open('PLANTS_database.csv') as csv_file:

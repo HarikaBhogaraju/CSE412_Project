@@ -43,7 +43,8 @@ with open('PLANTS_database.csv') as csv_file:
 
 for row in data:
     #insertProduct = "INSERT INTO Product (product_code,product_name,benefits,description,price) VALUES ("+ str(row[0]) + ","+ str(row[1]) + ","+ str(row[2]) + ","+ str(row[3]) + ","+ str(row[4]) + ")"
-    insertProduct = ''' INSERT INTO Product(product_code,product_name,benefits,description,price)
+    insertProduct = ''' INSERT INTO
+    Product(product_code,product_name,benefits,description,price)
     VALUES(%s,%s,%s,%s,%s) '''
     cursor.execute(insertProduct,row)
     conn.commit()

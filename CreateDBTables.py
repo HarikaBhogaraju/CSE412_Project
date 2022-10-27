@@ -5,7 +5,7 @@ import psycopg2
 #establishing the connection
 #Change X and Y to appropriate username and password
 conn = psycopg2.connect(
-   database="cse412", user='X', password='Y', host='127.0.0.1', port= '5432'
+   database="cse412", user='hbhogara', password='db123', host='127.0.0.1', port= '5432'
 )
 #Creating a cursor object using the cursor() method
 cursor = conn.cursor()
@@ -21,10 +21,10 @@ store_address VARCHAR(100) NOT NULL
 #Products
 createProduct = '''CREATE TABLE Product(
 product_id SERIAL PRIMARY KEY,
-product_code VARCHAR(5) NOT NULL,
-product_name VARCHAR(100) NOT NULL,
-benefits CHAR(200),
-description CHAR(200),
+product_code VARCHAR(20) NOT NULL,
+product_name TEXT NOT NULL,
+benefits TEXT,
+description TEXT,
 price FLOAT
 )'''
 
@@ -94,17 +94,17 @@ customer_id INT REFERENCES Customer(customer_id) NOT NULL
 )'''
 
 
-cursor.execute(createShop)
-print("Shop Table created successfully")
+#cursor.execute(createShop)
+#print("Shop Table created successfully")
 
 cursor.execute(createProduct)
 print("Products Table created successfully")
 
-cursor.execute(createCustomer)
-print("Customer Table created successfully")
+#cursor.execute(createCustomer)
+#print("Customer Table created successfully")
 
-cursor.execute(createFeedback)
-print("Feedback Table created successfully")
+#cursor.execute(createFeedback)
+#print("Feedback Table created successfully")
 
 cursor.execute(createItems)
 print("Items Table created successfully")
@@ -112,11 +112,11 @@ print("Items Table created successfully")
 cursor.execute(createCart)
 print("Cart Table created successfully")
 
-cursor.execute(createPayment)
-print("Payment Table created successfully")
+#cursor.execute(createPayment)
+#print("Payment Table created successfully")
 
-cursor.execute(createBill)
-print("Bill Table created successfully")
+#cursor.execute(createBill)
+#print("Bill Table created successfully")
 
 cursor.execute(createWishlist)
 print("Wishlist Table created successfully")

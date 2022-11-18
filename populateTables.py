@@ -48,3 +48,8 @@ for row in data:
     VALUES(%s,%s,%s,%s,%s) '''
     cursor.execute(insertProduct,row)
     conn.commit()
+
+insertCustomer = ''' INSERT INTO
+    Customer(customer_id,customer_name,email,password,shopping_address)
+    VALUES(1,"Alma Malmberg","alma@gmail.com","12345","2323 E Apache Blvd") '''
+cursor.execute(insertCustomer)

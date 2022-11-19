@@ -17,7 +17,6 @@ phone_number CHAR(10) NOT NULL,
 store_address VARCHAR(100) NOT NULL
 )'''
 
-
 #Products
 createProduct = '''CREATE TABLE Product(
 product_id SERIAL PRIMARY KEY,

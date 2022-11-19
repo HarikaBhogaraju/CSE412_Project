@@ -1,6 +1,7 @@
 import csv
 import random
 import psycopg2
+import hashlib
 
 #establishing the connection
 #Change X and Y to appropriate username and password
@@ -9,42 +10,55 @@ conn = psycopg2.connect(
 )
 #Creating a cursor object using the cursor() method
 cursor = conn.cursor()
-#Formatting data
-descriptions  = ["Alpine", "Desert","Tropical", "Coastal",
-                "Coniferous", "Deciduous", "Shrub", "Floral", "Fruit", "Indoor"]
-benefits = ["Therapeutic", "Decorative", "Fruity","Healing"]
-price = 0
-data = []
-with open('PLANTS_database.csv') as csv_file:
-    csv_reader = csv.reader(csv_file, delimiter=',')
-    line_count = 0
-    for row in csv_reader:
-        data_row = []
-        if line_count == 0:
-            print(f'Column names are {", ".join(row)}')
-            line_count += 1
-        else:
-            row[2] = row[2].replace(" ","-")
-            row[2] = row[2].replace("(","-")
-            row[2] = row[2].replace(")","-")
-            data_row.append(row[0]) #code
-            data_row.append(row[0+2]) #name
-            data_row.append(random.choice(benefits)) #benefit
-            data_row.append(random.choice(descriptions)) #description
-            data_row.append(str(round(random.uniform(1.00,20.00),2)))#price
-            line_count += 1
 
-            print(data_row)
+def addProducts():
+    #Formatting data
+    descriptions  = ["Alpine", "Desert","Tropical", "Coastal",
+                    "Coniferous", "Deciduous", "Shrub", "Floral", "Fruit", "Indoor"]
+    benefits = ["Therapeutic", "Decorative", "Fruity","Healing"]
+    price = 0
+    data = []
+    with open('PLANTS_database.csv') as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        line_count = 0
+        for row in csv_reader:
+            data_row = []
+            if line_count == 0:
+                print(f'Column names are {", ".join(row)}')
+                line_count += 1
+            else:
+                row[2] = row[2].replace(" ","-")
+                row[2] = row[2].replace("(","-")
+                row[2] = row[2].replace(")","-")
+                data_row.append(line_count)
+                data_row.append(row[0]) #code
+                data_row.append(row[0+2]) #name
+                data_row.append(random.choice(benefits)) #benefit
+                data_row.append(random.choice(descriptions)) #description
+                data_row.append(str(round(random.uniform(1.00,20.00),2)))#price
+                line_count += 1
 
-            data.append(data_row)
+                print(data_row)
 
-    print(f'Processed {line_count} lines.')
+                data.append(data_row)
 
+        print(f'Processed {line_count} lines.')
 
-for row in data:
-    #insertProduct = "INSERT INTO Product (product_code,product_name,benefits,description,price) VALUES ("+ str(row[0]) + ","+ str(row[1]) + ","+ str(row[2]) + ","+ str(row[3]) + ","+ str(row[4]) + ")"
-    insertProduct = ''' INSERT INTO
-    Product(product_code,product_name,benefits,description,price)
-    VALUES(%s,%s,%s,%s,%s) '''
-    cursor.execute(insertProduct,row)
+    for row in data:
+        #insertProduct = "INSERT INTO Product (product_code,product_name,benefits,description,price) VALUES ("+ str(row[0]) + ","+ str(row[1]) + ","+ str(row[2]) + ","+ str(row[3]) + ","+ str(row[4]) + ")"
+        insertProduct = ''' INSERT INTO
+        Product(product_id,product_code,product_name,benefits,description,price)
+        VALUES(%s,%s,%s,%s,%s,%s) '''
+        cursor.execute(insertProduct,row)
+        conn.commit()
+
+def addCustomer(cname,eml,pwd,s_a):
+    data = [cname,eml,pwd,s_a]
+    insertCustomer = ''' INSERT INTO
+    Customer(customer_name,email,password,shipping_address)
+    VALUES(%s,%s,%s,%s) '''
+    cursor.execute(insertCustomer,data)
     conn.commit()
+
+#addCustomer("Harika","hbhogara@asu.edu","password_unencrypted","123 X street, Y, Z - 12345")
+addProducts()

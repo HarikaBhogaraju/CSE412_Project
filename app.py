@@ -15,12 +15,26 @@ def get_db_connection():
 #def hello():
     #return '<h1>Plant Store</h1>'
 
-@app.route('/')
-def index():
+@app.route('/products')
+def getProducts():
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute('SELECT * FROM Product WHERE product_id < 101 ORDER BY product_id;')
     prods = cur.fetchall()
     cur.close()
     conn.close()
-    return render_template('index.html', prods=prods)
+    return render_template('products.html', prods=prods)
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/login', methods=['POST'])
+def login():
+    error = None
+    if request.method == 'POST':
+        if request.form['username'] != 'admin' or request.form['password'] != 'admin':
+            error = 'Invalid Credentials. Please try again.'
+        else:
+            return redirect(url_for('home'))
+    return render_template('login.html', error=error)

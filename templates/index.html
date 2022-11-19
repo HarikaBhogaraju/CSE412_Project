@@ -4,29 +4,21 @@
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
+    {% extends "base.html" %}
 
-{% extends 'base.html' %}
-
-{% block content %}
-<h3>{% block title %} Products {% endblock %}</h3>
-      {% for prod in prods %}
-          <div class='prod'>
-              <div class="row">
-                <div class="col s1 m6">
-                  <div class="card teal lighten-1">
-                    <div class="card-content white-text">
-                      <span class="card-title">#{{ prod[0] }} - {{ prod[1] }}</span>
-                      <h6>Scientific Name: {{ prod[2] }}</h6>
-                      <i><p>({{ prod[3] }})</p></i>
-                      <h6>{{ prod[4] }}</h6>
-                      <i><p>Price: ${{ prod[5] }}</p></i>
-                    </div>
-                    <div class="card-action">
-                      <a href="#">Add to Cart</a>
-                    </div>
-                  </div>
-                </div>
-              </div>
+    {% block content %}
+    <div class="container">
+      <h4>Login</h4>
+      <br>
+      <form action="" method="post">
+        <input type="text" placeholder="Username" name="username" value="{{
+          request.form.username }}">
+         <input type="password" placeholder="Password" name="password" value="{{
+          request.form.password }}">
+        <input class="btn btn-default" type="submit" value="Login">
+      </form>
+      {% if error %}
+        <p class="error"><strong>Error:</strong> {{ error }}
+      {% endif %}
     </div>
-    {% endfor %}
-{% endblock %}
+      {% endblock %}

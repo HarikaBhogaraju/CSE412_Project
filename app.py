@@ -28,6 +28,15 @@ def verify(username, password):
 #@app.route('/')
 #def hello():
     #return '<h1>Plant Store</h1>'
+def addCustomer(cname,eml,pwd,s_a):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    data = [cname,eml,pwd,s_a]
+    insertCustomer = ''' INSERT INTO
+    Customer(customer_name,email,password,shipping_address)
+    VALUES(%s,%s,%s,%s) '''
+    cur.execute(insertCustomer,data)
+    conn.commit()
 
 @app.route('/products')
 def getProducts():
@@ -42,6 +51,10 @@ def getProducts():
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/signup')
+def signup():
+    return render_template('signup.html')
 
 @app.route('/account/<uname>/<password>')
 def account(uname,password):
@@ -68,4 +81,14 @@ def login():
    else:
       unm = request.form['username']
       pwd = request.form['password']
+      return redirect(url_for('account',uname = unm,password=pwd))
+
+@app.route('/signup_post',methods = ['POST', 'GET'])
+def signup_post():
+   if request.method == 'POST':
+      unm = request.form['username']
+      pwd = request.form['password']
+      nm = request.form['name']
+      add = request.form['address']
+      addCustomer(nm,unm,pwd,add)
       return redirect(url_for('account',uname = unm,password=pwd))

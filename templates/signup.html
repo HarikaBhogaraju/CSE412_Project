@@ -12,17 +12,19 @@
   <div class="row">
     <div class="col s6 offset-s2">
       <div class="card">
-        <span span class="card-title flow-text">Login</span>
+        <span span class="card-title flow-text">Sign Up</span>
         <div class="card-content">
-          <form action = "/login" method = "post">
+          <form action = "/signup_post" method = "post">
+               <p>Name:</p>
+               <p><input type = "text" name = "name" /></p>
                <p>Email:</p>
                <p><input type = "text" name = "username" /></p>
                <p>Password:</p>
                <p><input type = "password" name = "password" /></p>
+               <p>Address:</p>
+               <p><input type = "text" name = "address" /></p>
                <br>
                <p><input type = "submit" value = "Submit" /></p>
-               <br>
-               <p>Don't have an account? <a href="/signup">Sign up here!</a></p>
           </form>
         </div>
       </div>

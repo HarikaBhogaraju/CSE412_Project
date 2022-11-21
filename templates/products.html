@@ -10,23 +10,31 @@
 {% block content %}
 <h3>{% block title %} Products {% endblock %}</h3>
       {% for prod in prods %}
-          <div class='prod'>
-              <div class="row">
-                <div class="col s1 m6">
-                  <div class="card teal lighten-1">
-                    <div class="card-content white-text">
-                      <span class="card-title">#{{ prod[0] }} - {{ prod[1] }}</span>
-                      <h6>Scientific Name: {{ prod[2] }}</h6>
-                      <i><p>({{ prod[3] }})</p></i>
-                      <h6>{{ prod[4] }}</h6>
-                      <i><p>Price: ${{ prod[5] }}</p></i>
-                    </div>
-                    <div class="card-action">
-                      <a href="#">Add to Cart</a>
-                    </div>
+      <form action="/cart_processing" method="post">
+        <div class='prod'>
+            <div class="row">
+              <div class="col s1 m6">
+                <div class="card teal lighten-1">
+                  <div class="card-content white-text">
+                    <span class="card-title"><textarea style="color:white;" readonly=readonly name="pid">#{{ prod[0] }}</textarea></span>
+                    <h6>{{ prod[1] }}</h6>
+                    <h6>Scientific Name: {{ prod[2] }}</h6>
+                    <i><p>({{ prod[3] }})</p></i>
+                    <h6>{{ prod[4] }}</h6>
+                    <i><p>Price: ${{ prod[5] }}</p></i>
+
+                    <p><input type="number" id="quantity" name="quantity" min="0" max="20" style="color:white;">0</p>
+                    <input type="text" id="pid" name="prod_id" value="{{ prod[0] }}" readonly hidden>
+                    <input type="text" id="price" name="prod_price" value="{{ prod[5] }}" readonly hidden>
+                    <input type="text" id="uname" name="username" value="{{ username }}" readonly hidden>
+                  </div>
+                  <div class="card-action">
+                    <p><input type = "submit" value = "Add to Cart" /></p>
                   </div>
                 </div>
               </div>
-    </div>
+            </div>
+          </div>
+      </form>
     {% endfor %}
 {% endblock %}

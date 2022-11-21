@@ -3,6 +3,7 @@ import psycopg2
 from flask import Flask, render_template, redirect, url_for, request
 
 app = Flask(__name__)
+num = 0
 
 def get_db_connection():
     conn = psycopg2.connect(
@@ -38,15 +39,97 @@ def addCustomer(cname,eml,pwd,s_a):
     cur.execute(insertCustomer,data)
     conn.commit()
 
-@app.route('/products')
-def getProducts():
+def getCID(username):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    getcid = ''' SELECT customer_id FROM Customer
+    WHERE Customer.email = %s'''
+    row = [username]
+    cur.execute(getcid,row)
+    cid = cur.fetchall()
+    cur.close()
+    conn.close()
+    #print(cid[0][0])
+    return cid
+
+def getCartID(custid):
+    cartID = 1
+
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    getcidCount = ''' SELECT COUNT(*) FROM Cart
+    WHERE customer_id = %s;'''
+    row = [custid]
+    cur.execute(getcidCount,row)
+    cidCount = cur.fetchall()
+
+    #check COUNT
+    if(cidCount[0][0] == 0):
+        #create cart
+        getcidCount = ''' SELECT COUNT(*) FROM Cart;'''
+        cur.execute(getcidCount)
+        cidCount = cur.fetchall()
+        cartID = cidCount
+        print(cartID)
+        return int(cartID[0][0])+1
+    else:
+        #add with existing cart ID
+        getCrtID = ''' SELECT cart_id FROM Cart
+        WHERE Cart.customer_id = %s;'''
+        cur.execute(getCrtID,row)
+        x = cur.fetchall()
+        cartID = x[0][0]
+        return cartID
+
+    cur.close()
+    conn.close()
+
+def totalAmountCalc(cartID):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    getcidCount = ''' SELECT SUM(unit_price*quantity) FROM Items
+    WHERE Items.cart_id = %s GROUP BY item_id'''
+    row = [cartID]
+    cur.execute(getcidCount,row)
+    x = cur.fetchall()
+    itemSum = x
+    print("SUM = ",itemSum)
+    return itemSum
+
+def allItems(cartID):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    getcidCount = ''' SELECT item_id FROM Items
+    WHERE Items.cart_id = %s'''
+    row = [cartID]
+    cur.execute(getcidCount,row)
+    x = cur.fetchall()
+    items = x
+    print("last = ",items)
+    return items
+
+def totalAmountItems(cartID):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    getCost = ''' SELECT SUM(unit_price*quantity) FROM Items
+    WHERE Items.cart_id = %s GROUP BY Items.cart_id'''
+
+    row = [cartID]
+    cur.execute(getCost,row)
+    x = cur.fetchall()
+    print("total sum = ",x)
+    return x[0][0]
+
+@app.route('/products/<uname>')
+def getProducts(uname):
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute('SELECT * FROM Product WHERE product_id < 101 ORDER BY product_id;')
     prods = cur.fetchall()
     cur.close()
     conn.close()
-    return render_template('products.html', prods=prods)
+    return render_template('products.html', prods=prods, username=uname)
 
 @app.route('/')
 def index():
@@ -67,7 +150,7 @@ def account(uname,password):
         prods = cur.fetchall()
         cur.close()
         conn.close()
-        return render_template('products.html', prods=prods)
+        return render_template('products.html', prods=prods, username=uname)
     else:
         print("THERE ARE ERRORS")
         return render_template('error.html')
@@ -92,3 +175,120 @@ def signup_post():
       add = request.form['address']
       addCustomer(nm,unm,pwd,add)
       return redirect(url_for('account',uname = unm,password=pwd))
+
+@app.route('/cart_processing', methods=['POST','GET'])
+def cart_processing():
+    conn = get_db_connection()
+    cur = conn.cursor()
+    insertItem = ''' INSERT INTO Items(unit_price, quantity, cart_id, product_id) VALUES(%s,%s,%s,%s)'''
+
+    if request.method == 'POST':
+        pid = request.form['prod_id']
+        prc = request.form['prod_price']
+        q = request.form['quantity']
+        unm = request.form['username']
+        cust_id = getCID(unm)
+        print("Cust ID = ", cust_id[0][0])
+        s = cust_id[0][0]
+        crt_id = getCartID(s)
+        #create item
+        data = [prc,q,crt_id,pid]
+        cur.execute(insertItem,data)
+        conn.commit()
+        insertCart = ''' INSERT INTO Cart(cart_id, customer_id, total_amount, item) VALUES(%s,%s,%s,%s)'''
+
+        items = allItems(crt_id)
+        itemCount = items[len(items)-1][0]
+        row = [crt_id,cust_id[0][0],round(float(prc)*int(q),2),itemCount]
+        cur.execute(insertCart,row)
+        conn.commit()
+
+#Total cart cost
+        sumQ = totalAmountItems(crt_id)
+        sum = sumQ
+        sum = round(sum,2)
+        return redirect(url_for('cart',totalSum = sum,uname=unm))
+    else:
+        return "Failed to add to cart"
+
+@app.route('/cart/<totalSum>/<uname>')
+def cart(totalSum,uname):
+    sum = totalSum
+    return render_template('cart.html',totalSum=sum,uname=uname)
+
+@app.route('/payment/<totalSum>/<uname>')
+def payment(totalSum,uname):
+    sum = totalSum
+    return render_template('payment.html',totalSum=sum,uname=uname)
+
+@app.route('/payment_processing', methods=['POST','GET'])
+def payment_processing():
+    conn = get_db_connection()
+    cur = conn.cursor()
+    insertPayment = ''' INSERT INTO Payment(payment_type,cardholder_name,amount,card_number,cvv,expiry_date) VALUES(%s,%s,%s,%s,%s,%s)'''
+    if request.method == 'POST':
+        card_name = request.form['cname']
+        card_amt = request.form['cart_sum']
+        card_no = request.form['cno']
+        type = request.form['ctype']
+        uname = request.form['uname']
+
+        card_type = ''
+        if(type == "Credit" or type == "credit"):
+            card_type = 'C'
+        else:
+            card_type = 'D'
+
+        card_cvv = request.form['cvv']
+        card_exp_date = request.form['exp_date']
+        row = [card_type,card_name,card_amt,card_no,card_cvv,card_exp_date]
+        cur.execute(insertPayment,row)
+        conn.commit()
+        return redirect(url_for('bill_processing',card_amt = card_amt,uname=uname))
+    else:
+        return "Couldn't process"
+
+@app.route('/bill_processing/<card_amt>/<uname>')
+def bill_processing(card_amt,uname):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    getItemNames = ''' SELECT product_name FROM Product, Items WHERE Product.product_id = Items.product_id AND Items.item_id = %s'''
+    getItemCosts = ''' SELECT (unit_price*quantity) FROM Product, Items WHERE Product.product_id = Items.product_id AND Items.item_id = %s'''
+    #get customer id from username
+    cust_id = getCID(uname)
+    print("Cust ID = ", cust_id[0][0])
+    s = cust_id[0][0]
+
+    #get card id from customer id
+    crt_id = getCartID(s)
+
+    #get all items from
+    itemsNoTemp = allItems(crt_id)
+    itemsNoList = []
+    for i in range(len(itemsNoTemp)): #get each item ID
+        itemsNoList.append(itemsNoTemp[i][0])
+
+    itemID = 0
+
+    itemsNameList = []
+    for i in range(len(itemsNoList)):
+        itemID = itemsNoList[i]
+        row = [itemID]
+        cur.execute(getItemNames,row)
+        name = cur.fetchall()
+        itemsNameList.append(name[0][0])
+
+    itemsTotalCostList = []
+    for i in range(len(itemsNoList)):
+        itemID = itemsNoList[i]
+        row = [itemID]
+        cur.execute(getItemCosts,row)
+        cost = cur.fetchall()
+        itemsTotalCostList.append(round(cost[0][0],2))
+
+    itemsList = []
+    for i in range(len(itemsNoList)):
+        item = [itemsNameList[i],itemsTotalCostList[i]]
+        itemsList.append(item)
+
+    return render_template('bill.html',Items=itemsList,uname=uname,totalSum=card_amt)

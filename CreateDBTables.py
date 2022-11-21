@@ -49,14 +49,11 @@ product_id INT REFERENCES Product(product_id) NOT NULL
 
 #Shopping Cart
 createCart = '''CREATE TABLE Cart(
-cart_id SERIAL PRIMARY KEY,
+cart_id INT NOT NULL,
 customer_id INT REFERENCES Customer(customer_id) NOT NULL,
 total_amount FLOAT NOT NULL,
 item INT REFERENCES Items(item_id) NOT NULL
 )'''
-
-
-
 
 #Bill
 createBill = '''CREATE TABLE Bill(

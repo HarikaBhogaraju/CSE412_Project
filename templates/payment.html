@@ -1,0 +1,49 @@
+<!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    {% extends "base.html" %}
+
+    {% block content %}
+    <h5>Total amount = <b>${{totalSum}}</b></h5>
+    <br>
+    <form action="/payment_processing" method="post">
+
+      <div class="row">
+        <div class="col s6">
+          <div class="card">
+            <span span class="card-title flow-text"><b>Payment</b></span>
+            <h6>Please enter payment information</h6>
+
+
+            <div class="card-content">
+              <form action = "/payment_processing" method = "post">
+                <input type="text" id="username" name="uname" value="{{ uname }}" readonly hidden>
+                <input type="text" id="sum" name="cart_sum" value="{{ totalSum }}" readonly hidden>
+                
+                <p>Choose payment type</p>
+                 <p><input type = "text" name = "ctype" /></p>
+                  <br>
+                   <p>Cardholder's name:</p>
+                   <p><input type = "text" name = "cname" /></p>
+                   <br>
+                   <p>Card Number:</p>
+                   <p><input type = "number" name = "cno" /></p>
+                   <p>CVV:</p>
+                   <p><input type = "password" name = "cvv" /></p>
+                   <p>Expiry Date:</p>
+                   <p><input type="date" name="exp_date"></p>
+                   <br>
+                   <input type="submit" name="confirm" value="Confirm Payment">
+                   <a class="waves-effect waves-light btn" href="/products/{{uname}}">View more products</a>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </form>
+
+      {% endblock %}

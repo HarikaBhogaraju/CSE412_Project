@@ -195,12 +195,12 @@ def cart_processing():
         data = [prc,q,crt_id,pid]
         cur.execute(insertItem,data)
         conn.commit()
-        insertCart = ''' INSERT INTO Cart(cart_id, customer_id, total_amount, item) VALUES(%s,%s,%s,%s)'''
+        updateCart = ''' UPDATE Cart SET customer_id = %s, total_amount = %s, item = %s  WHERE cart_id = %s;'''
 
         items = allItems(crt_id)
         itemCount = items[len(items)-1][0]
-        row = [crt_id,cust_id[0][0],round(float(prc)*int(q),2),itemCount]
-        cur.execute(insertCart,row)
+        row = [crt_id, cust_id[0][0],round(float(prc)*int(q),2),itemCount]
+        cur.execute(updateCart,row)
         conn.commit()
 
 #Total cart cost
@@ -292,3 +292,31 @@ def bill_processing(card_amt,uname):
         itemsList.append(item)
 
     return render_template('bill.html',Items=itemsList,uname=uname,totalSum=card_amt)
+
+@app.route('/feedback')
+def feedback():
+    return render_template('feedback.html')
+
+def addFeedback(comment,customer_id):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    data = [comment,customer_id]
+    insertFeedback = ''' INSERT INTO
+    Feedback(comment,customer_id)
+    VALUES(%s,%s)'''
+    cur.execute(insertFeedback,data)
+    conn.commit()
+
+@app.route('/feedback_post',methods = ['GET', 'POST'])
+def feedback_post():
+   if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        feedback = request.form['feedback']
+
+        while name=='' or feedback=='':
+            return render_template('feedback.html', message = 'Please fill in the fields')
+
+        addFeedback(feedback,getCID(name))
+        return render_template('feedback_submitted.html')
+

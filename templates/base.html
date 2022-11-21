@@ -1,22 +1,32 @@
-<!-- Compiled and minified CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-
-    <!-- Compiled and minified JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %} {% endblock %}- FlaskApp</title>
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script> 
+
+    <title>{% block title %} {% endblock %} Plant Store</title>
 </head>
+
 <body>
     <nav>
     <div class="nav-wrapper teal lighten-2">
       <h1><a href="{{ url_for('index') }}">Plant Store</a></h1>
       <ul id="nav-mobile" class="left hide-on-med-and-down">
       </ul>
+
+      <div class="navbar">
+          <ul>
+              <li><a style="color: lightseagreen" href="/products">PRODUCTS</a></li>
+              <li><a style="color: lightseagreen" href="/cart"><i class="fa fa-shopping-cart"></i> SHOPPING CART</a></li>
+              <li><a style="color: lightseagreen" href="/wishlist"><i class="fa fa-heart"></i> WISHLIST</a></li>
+              <li><a style="color: lightseagreen" href="/feedback">FEEDBACK</a></li>
+              <li><a style="color: lightseagreen" href="/contact"><i class="fa fa-phone"></i> CONTACT US</a></li>
+          </ul>
+      </div>
     </div>
   </nav>
     <hr>

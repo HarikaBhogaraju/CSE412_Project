@@ -131,6 +131,12 @@ def getProducts(uname):
     conn.close()
     return render_template('products.html', prods=prods, username=uname)
 
+def addtoWishlist():
+    return "Added"
+
+def removeFromWishlist():
+    return "Removed"
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -290,5 +296,7 @@ def bill_processing(card_amt,uname):
     for i in range(len(itemsNoList)):
         item = [itemsNameList[i],itemsTotalCostList[i]]
         itemsList.append(item)
+
+    #delete all cart and items
 
     return render_template('bill.html',Items=itemsList,uname=uname,totalSum=card_amt)

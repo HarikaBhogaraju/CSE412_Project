@@ -16,11 +16,13 @@
         <div class="card-content">
           <form action = "/login" method = "post">
                <p>Email:</p>
-               <p><input type = "text" name = "username" /></p>
+               <p><input type = "text" name = "uname" /></p>
                <p>Password:</p>
                <p><input type = "password" name = "password" /></p>
                <br>
-               <p><input type = "submit" value = "Submit" /></p>
+               <button class="btn waves-effect waves-light" type="submit" name="action">Submit
+               </button>
+               <br>
                <br>
                <p>Don't have an account? <a href="/signup">Sign up here!</a></p>
           </form>
@@ -28,6 +30,5 @@
       </div>
     </div>
   </div>
-
 
     {% endblock %}

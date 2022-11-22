@@ -11,12 +11,12 @@ def get_db_connection():
     )
     return conn
 
-def verify(username, password):
+def verify(uname, password):
     conn = get_db_connection()
     cur = conn.cursor()
     getCount = ''' SELECT COUNT(*) FROM Customer
     WHERE Customer.email = %s AND Customer.password = %s '''
-    row = [username,password]
+    row = [uname,password]
     cur.execute(getCount,row)
     count = cur.fetchall()
     cur.close()
@@ -39,12 +39,12 @@ def addCustomer(cname,eml,pwd,s_a):
     cur.execute(insertCustomer,data)
     conn.commit()
 
-def getCID(username):
+def getCID(uname):
     conn = get_db_connection()
     cur = conn.cursor()
     getcid = ''' SELECT customer_id FROM Customer
     WHERE Customer.email = %s'''
-    row = [username]
+    row = [uname]
     cur.execute(getcid,row)
     cid = cur.fetchall()
     cur.close()
@@ -129,7 +129,7 @@ def getProducts(uname):
     prods = cur.fetchall()
     cur.close()
     conn.close()
-    return render_template('products.html', prods=prods, username=uname)
+    return render_template('products.html', prods=prods, uname=uname)
 
 def addtoWishlist():
     return "Added"
@@ -156,7 +156,7 @@ def account(uname,password):
         prods = cur.fetchall()
         cur.close()
         conn.close()
-        return render_template('products.html', prods=prods, username=uname)
+        return render_template('products.html', prods=prods, uname=uname)
     else:
         print("THERE ARE ERRORS")
         return render_template('error.html')
@@ -164,18 +164,18 @@ def account(uname,password):
 @app.route('/login',methods = ['POST', 'GET'])
 def login():
    if request.method == 'POST':
-      unm = request.form['username']
+      unm = request.form['uname']
       pwd = request.form['password']
       return redirect(url_for('account',uname = unm,password=pwd))
    else:
-      unm = request.form['username']
+      unm = request.form['uname']
       pwd = request.form['password']
       return redirect(url_for('account',uname = unm,password=pwd))
 
 @app.route('/signup_post',methods = ['POST', 'GET'])
 def signup_post():
    if request.method == 'POST':
-      unm = request.form['username']
+      unm = request.form['uname']
       pwd = request.form['password']
       nm = request.form['name']
       add = request.form['address']
@@ -192,7 +192,7 @@ def cart_processing():
         pid = request.form['prod_id']
         prc = request.form['prod_price']
         q = request.form['quantity']
-        unm = request.form['username']
+        unm = request.form['uname']
         cust_id = getCID(unm)
         print("Cust ID = ", cust_id[0][0])
         s = cust_id[0][0]
@@ -277,7 +277,7 @@ def bill_processing(card_amt,uname):
     cur = conn.cursor()
     getItemNames = ''' SELECT product_name FROM Product, Items WHERE Product.product_id = Items.product_id AND Items.item_id = %s'''
     getItemCosts = ''' SELECT (unit_price*quantity) FROM Product, Items WHERE Product.product_id = Items.product_id AND Items.item_id = %s'''
-    #get customer id from username
+    #get customer id from uname
     cust_id = getCID(uname)
     print("Cust ID = ", cust_id[0][0])
     s = cust_id[0][0]
@@ -315,11 +315,18 @@ def bill_processing(card_amt,uname):
         itemsList.append(item)
 
     #delete all cart and items
+    deleteCart = ''' DELETE FROM Cart WHERE customer_id = %s '''
+    row = [cust_id[0][0]]
+    cur.execute(deleteCart,row)
+
+    deleteItems = ''' DELETE FROM Items WHERE cart_id = %s'''
+    row = [crt_id]
+    cur.execute(deleteItems,row)
 
     return render_template('bill.html',Items=itemsList,uname=uname,totalSum=card_amt)
 
-@app.route('/feedback')
-def feedback():
+@app.route('/feedback/<uname>')
+def feedback(uname):
     return render_template('feedback.html')
 
 def addFeedback(comment,customer_id):
@@ -332,8 +339,8 @@ def addFeedback(comment,customer_id):
     cur.execute(insertFeedback,data)
     conn.commit()
 
-@app.route('/feedback_post',methods = ['GET', 'POST'])
-def feedback_post():
+@app.route('/feedback_post/{{uname}}',methods = ['GET', 'POST'])
+def feedback_post(uname):
    if request.method == 'POST':
        name = request.form['name']
        email = request.form['email']
@@ -354,6 +361,22 @@ def feedback_post():
 
        addFeedback(feedback,getCID(email))
        return render_template('feedback_submitted.html')
+
+@app.route('/cart_nav/<uname>')
+def cart_nav(uname):
+    cust_id = getCID(uname)
+    print("Cust ID = ", cust_id[0][0])
+    s = cust_id[0][0]
+    crt_id = getCartID(s)
+    sumQ = totalAmountItems(crt_id)
+    sum = sumQ
+    sum = round(sum,2)
+    return redirect(url_for('cart',totalSum = sum,uname=uname))
+
+@app.route('/wishlist_nav')
+def wishlist_nav():
+    return "Wishlist nav content"
+
 
 @app.route('/contact')
 def contact():

@@ -16,15 +16,16 @@
     <div class="nav-wrapper teal lighten-2">
       <a href="{{ url_for('index') }}" class="brand-logo">Plant Store</a>
       <ul id="nav-mobile" class="right hide-on-med-and-down">
-        <!---
-        <li><a href="/products/{{username}}">PRODUCTS</a></li>
-        <li><a href="/cart_processing"><i class="fa fa-shopping-cart"></i> SHOPPING CART</a></li>
-        <li><a href="/wishlist"><i class="fa fa-heart"></i> WISHLIST</a></li>
-        <li><a href="/feedback_post">FEEDBACK</a></li>
-        <li><a href="/contact"><i class="fa fa-phone"></i> CONTACT US</a></li>
-      -->
+
+        <li><a href="/products/{{uname}}"><i class="fa fa-list"></i>PRODUCTS</a></li>
+        <li><a href="/cart_nav/{{uname}}"><i class="fa fa-shopping-cart"></i> SHOPPING CART</a></li>
+        <li><a href="/wishlist_nav/{{uname}}"><i class="fa fa-heart"></i> WISHLIST</a></li>
+        <li><a href="/feedback/{{uname}}"><i class="fa fa-sticky-note-o"></i>FEEDBACK</a></li>
+        <li><a href="/contact/{{uname}}"><i class="fa fa-phone"></i> CONTACT US</a></li>
+
       </ul>
     </div>
+    <input type="text" id="uname" name="uname" value="{{ uname }}" readonly hidden>
   </nav>
     <hr>
     <div class="content">

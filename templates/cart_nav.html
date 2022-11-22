@@ -9,6 +9,7 @@
     {% block content %}
     <h3>Shopping cart</h3>
     <h5>Total Cart Amount = <b>${{totalSum}}</b></h5>
+    <h5>{{uname}}</h5>
     <form class="" action="/payment" method="post">
       <input type="text" id="sum" name="cart_sum" value="{{ totalSum }}" readonly hidden>
     </form>

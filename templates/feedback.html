@@ -11,21 +11,29 @@
 <h1>
     We would love to hear your feedback!
 </h1>
+<div class="row">
+  <div class="col s12 m6">
+  <form action="/feedback_post/{{uname}}" method="post">
 
-<form action="/feedback_post" method="post">
-    <div class="col s1 m6">
-        <div class="card teal lighten-2">
-          <div class="card-content white-text">
-              <p>Name:</p>
-              <input type="text" name="name" />
-              <p>Email:</p>
-              <input type="email" name="email" />
-              <p>Please give your feedback about your shopping experience:</p>
-              <input type="text" name="feedback" />
-            <br/><br/>
-            <button type="submit">Submit</button>
-        </div>
+          <div class="card teal lighten-4">
+            <div class="card-content black-text">
+                <p>Name:</p>
+                <input type="text" name="name" />
+                <br>
+                <p>Email:</p>
+                <input type="email" name="email" />
+                <br>
+                <br>
+                <p>Please give your feedback about your shopping experience:</p>
+                <input type="text" name="feedback" />
+                <input type="text" id="uname" name="uname" value="{{ uname }}" readonly hidden>
+              <br/><br/>
+              <button type="submit">Submit</button>
+
+          </div>
+      </div>
+      </form>
     </div>
-  </div>
-</form>
+</div>
+
 {% endblock %}

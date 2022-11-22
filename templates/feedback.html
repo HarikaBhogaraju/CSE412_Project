@@ -12,16 +12,16 @@
     We would love to hear your feedback!
 </h1>
 
-<form method="post">
+<form action="/feedback_post" method="post">
     <div class="col s1 m6">
-        <div class="card teal lighten-1">
+        <div class="card teal lighten-2">
           <div class="card-content white-text">
-            Name: <br/><br/><input name="name"/>
-            <br/><br/>
-
-            Email: <br/><br/><input name="email"/>
-            <br/><br/>
-            Please give your feedback about your shopping experience: <br/><br/><input feedback="feedback"/>
+              <p>Name:</p>
+              <input type="text" name="name" />
+              <p>Email:</p>
+              <input type="email" name="email" />
+              <p>Please give your feedback about your shopping experience:</p>
+              <input type="text" name="feedback" />
             <br/><br/>
             <button type="submit">Submit</button>
         </div>

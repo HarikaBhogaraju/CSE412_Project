@@ -252,7 +252,24 @@ def payment_processing():
         conn.commit()
         return redirect(url_for('bill_processing',card_amt = card_amt,uname=uname))
     else:
-        return "Couldn't process"
+        card_name = request.form['cname']
+        card_amt = request.form['cart_sum']
+        card_no = request.form['cno']
+        type = request.form['ctype']
+        uname = request.form['uname']
+
+        card_type = ''
+        if(type == "Credit" or type == "credit"):
+            card_type = 'C'
+        else:
+            card_type = 'D'
+
+        card_cvv = request.form['cvv']
+        card_exp_date = request.form['exp_date']
+        row = [card_type,card_name,card_amt,card_no,card_cvv,card_exp_date]
+        cur.execute(insertPayment,row)
+        conn.commit()
+        return redirect(url_for('bill_processing',card_amt = card_amt,uname=uname))
 
 @app.route('/bill_processing/<card_amt>/<uname>')
 def bill_processing(card_amt,uname):
@@ -308,7 +325,7 @@ def feedback():
 def addFeedback(comment,customer_id):
     conn = get_db_connection()
     cur = conn.cursor()
-    data = [comment,customer_id]
+    data = [comment,customer_id[0][0]]
     insertFeedback = ''' INSERT INTO
     Feedback(comment,customer_id)
     VALUES(%s,%s)'''
@@ -318,13 +335,26 @@ def addFeedback(comment,customer_id):
 @app.route('/feedback_post',methods = ['GET', 'POST'])
 def feedback_post():
    if request.method == 'POST':
-        name = request.form['name']
-        email = request.form['email']
-        feedback = request.form['feedback']
+       name = request.form['name']
+       email = request.form['email']
+       feedback = request.form['feedback']
 
-        while name=='' or feedback=='':
-            return render_template('feedback.html', message = 'Please fill in the fields')
+       if (name=="" or feedback==""):
+           return render_template('feedback.html', message = 'Please fill in the fields')
 
-        addFeedback(feedback,getCID(name))
-        return render_template('feedback_submitted.html')
+       addFeedback(feedback,getCID(email))
+       return render_template('feedback_submitted.html')
+   else:
+       name = request.form['name']
+       email = request.form['email']
+       feedback = request.form['feedback']
 
+       if (name=="" or feedback==""):
+           return render_template('feedback.html', message = 'Please fill in the fields')
+
+       addFeedback(feedback,getCID(email))
+       return render_template('feedback_submitted.html')
+
+@app.route('/contact')
+def contact():
+    return render_template('contact.html')

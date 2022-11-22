@@ -1,11 +1,29 @@
 <!-- Compiled and minified CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 
-    <!-- Compiled and minified JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<!-- Compiled and minified JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
-    {% extends "base.html" %}
+{% extends "base.html" %}
 
-    {% block content %}
-    <h3>Wishlist</h3>
-    {% endblock %}
+{% block content %}
+<h3><i class="fa fa-heart"></i> Wish List</h3>
+<form class="" action="/delete_wishItem" method="post">
+    <input type="text" id="itemID" name="pid" value="{{ pid }}" readonly hidden>
+</form>
+
+<div class="card-action">
+    <table>
+        <tr>
+            <th>Items</th>
+        </tr>
+        {%for pid in wishlist %}
+        <tr>
+            <td>{{pid}}</td>
+            <td><a class="waves-effect waves-light btn" href="/delete_wishItem/{{pid}}">Remove</a>></td>
+        </tr>
+        {%endfor%}
+    </table>
+</div>
+
+  {% endblock %}

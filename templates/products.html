@@ -10,11 +10,18 @@
 {% block content %}
 <h3>{% block title %} Products {% endblock %}</h3>
       {% for prod in prods %}
-      <form action="/cart_processing" method="post">
-        <div class='prod'>
-            <div class="row">
-              <div class="col s1 m6">
-                <div class="card teal lighten-1">
+      <div class='prod'>
+          <div class="row">
+            <div class="col s1 m6">
+              <div class="card teal lighten-1">
+                
+                <form action="/wishlist_post" method="post">
+                  <div class="card-action">
+                    <button class="btn"><i class="fa fa-heart"></i></button>
+                  </div>
+                </form>
+
+                <form action="/cart_processing" method="post">
                   <div class="card-content white-text">
                     <span class="card-title"><textarea style="color:white;" readonly=readonly name="pid">#{{ prod[0] }}</textarea></span>
                     <h6>{{ prod[1] }}</h6>
@@ -27,14 +34,14 @@
                     <input type="text" id="pid" name="prod_id" value="{{ prod[0] }}" readonly hidden>
                     <input type="text" id="price" name="prod_price" value="{{ prod[5] }}" readonly hidden>
                     <input type="text" id="uname" name="username" value="{{ username }}" readonly hidden>
-                  </div>
+                  </div> 
                   <div class="card-action">
                     <p><input type = "submit" value = "Add to Cart" /></p>
                   </div>
-                </div>
+                </form>
               </div>
             </div>
           </div>
-      </form>
+        </div>  
     {% endfor %}
 {% endblock %}

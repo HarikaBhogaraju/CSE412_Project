@@ -358,3 +358,32 @@ def feedback_post():
 @app.route('/contact')
 def contact():
     return render_template('contact.html')
+
+@app.route('/wishlist')
+def wishlist():
+    return render_template('wishlist.html')
+
+wishlist = []
+
+@app.route('/wishlist_post', methods=['POST','GET'])
+def wishlist_post():
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    if request.method == 'POST':
+        pid = request.form['prod_id']
+        global wishlist
+        wishlist.append(pid)
+        
+        #cur.execute(updateCart,row)
+        #conn.commit()
+    
+    return redirect(url_for('wishlist',wishlist=wishlist))   
+
+@app.route('/delete_wishItem/<pid>')
+def delete_wishItem(pid):
+    itemID = pid
+    global wishlist
+    wishlist.remove(pid)
+
+    return redirect(url_for('wishlist',pid=itemID))

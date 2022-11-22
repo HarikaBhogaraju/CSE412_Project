@@ -386,7 +386,8 @@ def contact():
 def wishlist():
     return render_template('wishlist.html')
 
-wishlist = []
+wishlistID = []
+wishlistName = []
 
 @app.route('/wishlist_post', methods=['POST','GET'])
 def wishlist_post():
@@ -395,13 +396,29 @@ def wishlist_post():
 
     if request.method == 'POST':
         pid = request.form['prod_id']
-        global wishlist
-        wishlist.append(pid)
-        
+        uname = request.form['uname']
+
+        global wishlistID
+        wishlistID.append(pid)
+        addtoWishlist = '''INSERT INTO WISHLIST(list_name,product_id) VALUES(%s,%s)'''
+        row = [uname,pid]
+        cur.execute(addtoWishlist,row)
+        conn.commit()
+
+        #get names of products to display on wishlist page
+        #getProdNames = ''' SELECT product_name FROM Product WHERE product_id =  %s'''
+
+        #global wishlistName
+
+        #for i in wishlistID:
+            #row = [i]
+            #print(i)
+            #name = cur.execute(getProdNames,row)
+            #wishlistName.append(name[0][0])
         #cur.execute(updateCart,row)
         #conn.commit()
-    
-    return redirect(url_for('wishlist',wishlist=wishlist))   
+    #return wishlistName
+    return redirect(url_for('wishlist',wishlist=wishlistID))
 
 @app.route('/delete_wishItem/<pid>')
 def delete_wishItem(pid):

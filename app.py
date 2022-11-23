@@ -119,7 +119,10 @@ def totalAmountItems(cartID):
     cur.execute(getCost,row)
     x = cur.fetchall()
     print("total sum = ",x)
-    return x[0][0]
+    if(x == []):
+        return 0
+    else:
+        return x[0][0]
 
 @app.route('/products/<uname>')
 def getProducts(uname):
@@ -318,16 +321,16 @@ def bill_processing(card_amt,uname):
     deleteCart = ''' DELETE FROM Cart WHERE customer_id = %s '''
     row = [cust_id[0][0]]
     cur.execute(deleteCart,row)
-
+    conn.commit()
     deleteItems = ''' DELETE FROM Items WHERE cart_id = %s'''
     row = [crt_id]
     cur.execute(deleteItems,row)
-
+    conn.commit()
     return render_template('bill.html',Items=itemsList,uname=uname,totalSum=card_amt)
 
 @app.route('/feedback/<uname>')
 def feedback(uname):
-    return render_template('feedback.html')
+    return render_template('feedback.html',uname=uname)
 
 def addFeedback(comment,customer_id):
     conn = get_db_connection()
@@ -339,18 +342,16 @@ def addFeedback(comment,customer_id):
     cur.execute(insertFeedback,data)
     conn.commit()
 
-@app.route('/feedback_post/{{uname}}',methods = ['GET', 'POST'])
+@app.route('/feedback_post/<uname>',methods = ['GET', 'POST'])
 def feedback_post(uname):
    if request.method == 'POST':
        name = request.form['name']
        email = request.form['email']
        feedback = request.form['feedback']
 
-       if (name=="" or feedback==""):
-           return render_template('feedback.html', message = 'Please fill in the fields')
 
-       addFeedback(feedback,getCID(email))
-       return render_template('feedback_submitted.html')
+       addFeedback(feedback,getCID(uname))
+       return render_template('feedback_submitted.html',uname=uname)
    else:
        name = request.form['name']
        email = request.form['email']
@@ -359,8 +360,8 @@ def feedback_post(uname):
        if (name=="" or feedback==""):
            return render_template('feedback.html', message = 'Please fill in the fields')
 
-       addFeedback(feedback,getCID(email))
-       return render_template('feedback_submitted.html')
+       addFeedback(feedback,getCID(email)[0])
+       return render_template('feedback_submitted.html',uname=email)
 
 @app.route('/cart_nav/<uname>')
 def cart_nav(uname):
@@ -400,6 +401,7 @@ def wishlist_post():
 
         global wishlistID
         wishlistID.append(pid)
+
         addtoWishlist = '''INSERT INTO WISHLIST(list_name,product_id) VALUES(%s,%s)'''
         row = [uname,pid]
         cur.execute(addtoWishlist,row)
@@ -418,7 +420,7 @@ def wishlist_post():
         #cur.execute(updateCart,row)
         #conn.commit()
     #return wishlistName
-    return redirect(url_for('wishlist',wishlist=wishlistID))
+    return redirect(url_for('wishlist',wishlistID=wishlistID))
 
 @app.route('/delete_wishItem/<pid>')
 def delete_wishItem(pid):

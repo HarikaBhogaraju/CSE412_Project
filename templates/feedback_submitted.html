@@ -9,5 +9,8 @@
 {% block content %}
 <div class="col s1 m6">
    <h1>Thank you for your feedback!</h1>
+   <form class="" action="index.html" method="post">
+     <input type="text" id="itemID" name="uname" value="{{ uname }}" readonly hidden>
+   </form>
 </div>
 {% endblock %}

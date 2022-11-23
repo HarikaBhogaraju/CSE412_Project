@@ -11,11 +11,12 @@
 <h1>
     We would love to hear your feedback!
 </h1>
+
 <div class="row">
   <div class="col s12 m6">
   <form action="/feedback_post/{{uname}}" method="post">
 
-          <div class="card teal lighten-4">
+          <div class="card grey lighten-4">
             <div class="card-content black-text">
                 <p>Name:</p>
                 <input type="text" name="name" />
@@ -28,8 +29,8 @@
                 <input type="text" name="feedback" />
                 <input type="text" id="uname" name="uname" value="{{ uname }}" readonly hidden>
               <br/><br/>
-              <button type="submit">Submit</button>
-
+              <button class="waves-effect waves-light btn" type="submit" name="action">Submit
+              </button>
           </div>
       </div>
       </form>

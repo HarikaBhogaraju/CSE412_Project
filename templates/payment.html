@@ -22,7 +22,7 @@
               <form action = "/payment_processing" method = "post">
                 <input type="text" id="uname" name="uname" value="{{ uname }}" readonly hidden>
                 <input type="text" id="sum" name="cart_sum" value="{{ totalSum }}" readonly hidden>
-                
+
                 <p>Choose payment type</p>
                  <p><input type = "text" name = "ctype" /></p>
                   <br>
@@ -36,7 +36,8 @@
                    <p>Expiry Date:</p>
                    <p><input type="date" name="exp_date"></p>
                    <br>
-                   <input type="submit" name="confirm" value="Confirm Payment">
+                   <button class="waves-effect waves-light btn" type="submit" name="action">Confirm Payment
+                   </button>
                    <a class="waves-effect waves-light btn" href="/products/{{uname}}">View more products</a>
               </form>
             </div>

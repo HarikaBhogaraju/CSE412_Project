@@ -67,6 +67,7 @@ item INT NOT NULL
 #Wish List
 createWishlist = '''CREATE TABLE Wishlist(
 wishlist_id SERIAL PRIMARY KEY,
+customer_id INT REFERENCES Customer(customer_id) NOT NULL,
 list_name CHAR(50) NOT NULL,
 product_id INT REFERENCES Product(product_id) NOT NULL
 )'''

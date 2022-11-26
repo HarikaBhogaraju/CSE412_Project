@@ -7,23 +7,39 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h3><i class="fa fa-heart"></i> Wish List</h3>
-<form class="" action="/delete_wishItem" method="post">
-    <input type="text" id="itemID" name="pid" value="{{ pid }}" readonly hidden>
-</form>
+<h3>{% block title %} Wishlist {% endblock %}<i class="fa fa-heart"></i></h3>
 
-<div class="card-action">
-    <table>
-        <tr>
-            <th>Items</th>
-        </tr>
-        {%for pid in wishlistID %}
-        <tr>
-            <td>{{pid}}</td>
-            <td><a class="waves-effect waves-light btn" href="/delete_wishItem/{{pid}}">Remove</a>></td>
-        </tr>
-        {%endfor%}
-    </table>
+<div class="row">
+    <div class="col s1 m6">
+      <div class="card teal lighten-1">
+
+       <!-- <form action="/createList" method="post">
+
+            <div class="card-action">
+                <button class="btn waves-effect white black-text" type="submit" name="action">Create List</button>
+            </div>
+        </form>-->
+
+        <form class="" action="/delete_wishItem" method="post">
+            <div class="card-action">
+                <div class="card-content white-text">
+                    <table>
+                        <tr>
+                            <th>Items</th>
+                        </tr>
+                        {%for pName in wishlistName %}
+                        <tr>
+                            <td>{{pName}}</td>
+                            <td><a class="waves-effect waves-light btn" href="/delete_wishItem/{{pName}}">Remove</a></td>
+                        </tr>
+                        {%endfor%}
+                    </table>
+                </div>
+            </div>
+        </form>
+
+        </div>
+    </div>
 </div>
 
   {% endblock %}

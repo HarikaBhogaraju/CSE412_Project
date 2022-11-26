@@ -133,6 +133,7 @@ def getProducts(uname):
     cur.close()
     conn.close()
     return render_template('products.html', prods=prods, uname=uname)
+   
 
 def addtoWishlist():
     return "Added"
@@ -206,16 +207,17 @@ def cart_processing():
         conn.commit()
         updateCart = ''' UPDATE Cart SET customer_id = %s, total_amount = %s, item = %s  WHERE cart_id = %s;'''
 
+        #Total cart cost
+        sumQ = totalAmountItems(crt_id)
+        sum = sumQ
+        sum = round(sum,2)  
         items = allItems(crt_id)
         itemCount = items[len(items)-1][0]
-        row = [crt_id, cust_id[0][0],round(float(prc)*int(q),2),itemCount]
+        row = [cust_id[0][0],sum,itemCount, crt_id]
         cur.execute(updateCart,row)
         conn.commit()
 
-#Total cart cost
-        sumQ = totalAmountItems(crt_id)
-        sum = sumQ
-        sum = round(sum,2)
+
         return redirect(url_for('cart',totalSum = sum,uname=unm))
     else:
         return "Failed to add to cart"
@@ -349,7 +351,6 @@ def feedback_post(uname):
        email = request.form['email']
        feedback = request.form['feedback']
 
-
        addFeedback(feedback,getCID(uname))
        return render_template('feedback_submitted.html',uname=uname)
    else:
@@ -390,6 +391,45 @@ def wishlist():
 wishlistID = []
 wishlistName = []
 
+
+#@app.route('/wishlist/<uname>/<wishlistName>')
+def getWishItems(uname, wishlistName):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    getItems = 'SELECT product_id FROM Wishlist WHERE customer_id = %s;'
+    row = [getCID(uname)[0][0]]
+    cur.execute(getItems, row)
+    wishID = cur.fetchall()
+
+    #get names of products to display on wishlist page
+    for pid in wishID:
+        getProdNames = ''' SELECT product_name FROM Product WHERE product_id =  %s'''
+        row = [pid]
+        cur.execute(getProdNames,row)
+        pName = cur.fetchall()
+        #print("pName: " , pName[0][0])
+        conn.commit()
+        
+        #if not in wishlistName, add it
+        check = False
+        #for item in wishlistName:
+            #check = False
+            #print('Item: ', item)
+            #print('pName: ', pName[0][0])
+            #if pName[0][0] == item:
+             #   check = True
+                #print('Entered')
+              #  break
+            #else:
+             #   check = False
+       # print('Check: ', check)
+        #if check:
+        wishlistName.append(pName[0][0])
+
+    cur.close()
+    conn.close()
+    #return render_template('wishlist.html', wishlistName=wishlistName, uname=uname)
+
 @app.route('/wishlist_post', methods=['POST','GET'])
 def wishlist_post():
     conn = get_db_connection()
@@ -399,33 +439,58 @@ def wishlist_post():
         pid = request.form['prod_id']
         uname = request.form['uname']
 
+        check_wishlist = ''' SELECT COUNT(*) FROM Wishlist
+        WHERE list_name = %s AND product_id = %s'''
+        row = ['Default', pid]
+        cur.execute(check_wishlist,row)
+        check = cur.fetchall()
+
+        if(check[0][0] == 0):
+            addtoWishlist = '''INSERT INTO Wishlist(customer_id, list_name, product_id) VALUES(%s,%s, %s)'''
+            cust_id = getCID(uname)
+            row = [cust_id[0][0], 'Default',pid]
+            cur.execute(addtoWishlist,row)
+            conn.commit()
+
         global wishlistID
+        global wishlistName
         wishlistID.append(pid)
 
-        addtoWishlist = '''INSERT INTO WISHLIST(list_name,product_id) VALUES(%s,%s)'''
-        row = [uname,pid]
-        cur.execute(addtoWishlist,row)
-        conn.commit()
+        getWishItems(uname, wishlistName)
+    
+    return render_template('wishlist.html', wishlistName=wishlistName)
 
-        #get names of products to display on wishlist page
-        #getProdNames = ''' SELECT product_name FROM Product WHERE product_id =  %s'''
+#@app.route('/createList/<listName>')
+#def createList(listName):
 
-        #global wishlistName
+def getPID(pName):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    product = 'SELECT product_id FROM Product WHERE product_name = %s;'
+    row = [pName]
+    cur.execute(product,row)
+    pid = cur.fetchall()
+    conn.commit()
 
-        #for i in wishlistID:
-            #row = [i]
-            #print(i)
-            #name = cur.execute(getProdNames,row)
-            #wishlistName.append(name[0][0])
-        #cur.execute(updateCart,row)
-        #conn.commit()
-    #return wishlistName
-    return redirect(url_for('wishlist',wishlistID=wishlistID))
+    return pid
 
-@app.route('/delete_wishItem/<pid>')
-def delete_wishItem(pid):
-    itemID = pid
-    global wishlist
-    wishlist.remove(pid)
+@app.route('/delete_wishItem/<pName>')
+def delete_wishItem(pName):
+    conn = get_db_connection()
+    cur = conn.cursor()
 
-    return redirect(url_for('wishlist',pid=itemID))
+    global wishlistName
+    wishlistName.remove(pName)
+
+    deleteItem = '''DELETE FROM Wishlist WHERE product_id = %s'''
+    pid = getPID(pName)
+    row = [pid[0][0]]
+    cur.execute(deleteItem,row)
+    conn.commit()
+
+    for item in wishlistName:
+            #check = False
+            print('Item: ', item)
+            print('pName: ', pName[0][0])
+
+    return redirect(url_for('wishlist'))

@@ -20,7 +20,8 @@
             </div>
         </form>-->
 
-        <form class="" action="/delete_wishItem" method="post">
+        <form action="/delete_wishItem/" method="post">
+          <input type="text" id="uname" name="uname" value="{{ uname }}" readonly hidden>
             <div class="card-action">
                 <div class="card-content white-text">
                     <table>
@@ -30,7 +31,7 @@
                         {%for pName in wishlistName %}
                         <tr>
                             <td>{{pName}}</td>
-                            <td><a class="waves-effect waves-light btn" href="/delete_wishItem/{{pName}}">Remove</a></td>
+                            <td><a class="waves-effect waves-light btn" href="/delete_wishItem/{{pName}}/{{uname}}">Remove</a></td>
                         </tr>
                         {%endfor%}
                     </table>
